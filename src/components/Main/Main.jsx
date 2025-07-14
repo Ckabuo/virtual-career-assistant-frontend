@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react'
 import './Main.css'
 import { assets } from '../../assets/assets'
 import { Context } from '../../context/Context'
+import ReactMarkdown from 'react-markdown';
 // import { HashLink as Link } from 'react-router-hash-link';
 
 const Main = () => {
@@ -37,7 +38,7 @@ const Main = () => {
                   <hr className="animated-bg" />
                   <hr className="animated-bg" />
                 </div>
-                : <p dangerouslySetInnerHTML={{ __html: resultData }}></p>
+                : <div className="mt-2 markdown-content"><ReactMarkdown components={{ p: ({node, ...props}) => <p style={{whiteSpace: 'pre-wrap'}} {...props} /> }}>{resultData}</ReactMarkdown></div>
               }
             </div>
 

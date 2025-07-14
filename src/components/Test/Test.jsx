@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Test.css';
 import { Context } from '../../context/Context';
+import swal from 'sweetalert';
 
 const sectionBQuestions = {
   Realistic: [
@@ -121,35 +122,15 @@ export default function Test() {
 
     return prompt;
   };
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     const prompt = buildPrompt();
-    const token = localStorage.getItem("token");
-
     try {
-      // Call onSent and receive the generated response
-      const generatedResponse = await onSent(prompt);
-
-      const res = await fetch("http://localhost:5000/api/submit-response", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`
-        },
-        body: JSON.stringify({ prompt, response: generatedResponse })
-      });
-
-      const data = await res.json();
-      console.log("Response saved:", data);
-
-      if (res.ok) {
-        navigate('/main');
-      } else {
-        console.error("Save error:", data.error);
-      }
+      await onSent(prompt);
+      navigate('/dashboard');
     } catch (err) {
-      console.error("Submission failed:", err);
+      swal('Submission failed', err.message, 'error');
     }
   };
 

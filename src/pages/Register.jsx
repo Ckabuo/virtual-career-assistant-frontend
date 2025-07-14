@@ -15,7 +15,7 @@ export default function Register() {
     e.preventDefault();
     try {
       await register(username, email, password);
-      navigate('/login');
+      navigate('/test'); // Redirect to test page after auto-login
     } catch (err) {
       console.error(err);
       setError('Registration failed. Please try again.');

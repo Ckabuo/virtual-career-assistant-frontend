@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './admin.css';
-import axios from 'axios';
+import { responsesAPI } from '../services/api';
+import ReactMarkdown from 'react-markdown';
 
 export default function AdminView() {
   const [allResponses, setAllResponses] = useState([]);
@@ -10,13 +11,9 @@ export default function AdminView() {
   useEffect(() => {
   async function fetchAll() {
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.get('http://localhost:5000/api/all-responses', {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
-      setAllResponses(res.data);
+      const response = await responsesAPI.getAllResponses();
+      setAllResponses(response.data);
+      setError('');
     } catch (err) {
       setError('Unauthorized or failed to fetch data.');
       console.error(err);
@@ -47,7 +44,15 @@ export default function AdminView() {
                 <strong>User ID:</strong> {item.userId}
               </p>
               <h4 className="font-semibold">Response #{idx + 1}</h4>
-              <p className="whitespace-pre-wrap mt-2">{item.response}</p>
+              <div className="mt-2 markdown-content">
+                <ReactMarkdown
+                  components={{
+                    p: ({node, ...props}) => <p style={{whiteSpace: 'pre-wrap'}} {...props} />
+                  }}
+                >
+                  {item.response}
+                </ReactMarkdown>
+              </div>
             </div>
           ))}
         </div>

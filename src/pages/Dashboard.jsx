@@ -1,19 +1,24 @@
 // pages/Dashboard.jsx
 import React, { useEffect, useState } from 'react';
 import './dashboard.css';
-import axios from 'axios';
+import { responsesAPI } from '../services/api';
+import ReactMarkdown from 'react-markdown';
 
 export default function Dashboard() {
   const [responses, setResponses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     async function fetchResponses() {
       try {
-        const res = await axios.get('http://localhost:5000/api/my-responses');
-        setResponses(res.data);
+        setLoading(true);
+        const response = await responsesAPI.getMyResponses();
+        setResponses(response.data);
+        setError(null);
       } catch (err) {
         console.error('Error fetching responses:', err);
+        setError('Failed to load responses');
       } finally {
         setLoading(false);
       }
@@ -34,7 +39,15 @@ export default function Dashboard() {
             <div key={item._id} className="response-card p-4 border rounded bg-white">
               <p className="text-gray-700 text-sm mb-2">Submitted on: {new Date(item.createdAt).toLocaleString()}</p>
               <h4 className="font-semibold">Response #{idx + 1}</h4>
-              <p className="whitespace-pre-wrap mt-2">{item.response}</p>
+              <div className="mt-2 markdown-content">
+                <ReactMarkdown
+                  components={{
+                    p: ({node, ...props}) => <p style={{whiteSpace: 'pre-wrap'}} {...props} />
+                  }}
+                >
+                  {item.response}
+                </ReactMarkdown>
+              </div>
             </div>
           ))}
         </div>

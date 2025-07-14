@@ -54,6 +54,12 @@ body {
   margin-bottom: 0.5rem;
 }
 
+.markdown-content ul, .markdown-content ol {
+  list-style: disc inside;
+  margin-left: 1.5em;
+  padding-left: 0;
+}
+
 @media (max-width: 600px) {
   .dashboard-container {
     margin: 1rem;

@@ -7,7 +7,7 @@
 }
 #root{
   min-height: 100vh;
-  display: flex;
+  /* display: flex; */
   animation: fadeIn 1.5s;
 }
 

@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { createContext, useContext, useState } from 'react';
+import { authAPI } from '../services/api';
 
 const AuthContext = createContext();
 
@@ -7,24 +7,32 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token'));
 
-  useEffect(() => {
-    if (token) {
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    } else {
-      delete axios.defaults.headers.common['Authorization'];
-    }
-  }, [token]);
-
   const login = async (email, password) => {
-    const res = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/auth/login`, { email, password });
-    const { token, username } = res.data;
-    setToken(token);
-    setUser({ email, username });
-    localStorage.setItem('token', res.data.token);
+    try {
+      const res = await authAPI.login({ email, password });
+      const { token } = res.data;
+      setToken(token);
+      setUser({ email });
+      localStorage.setItem('token', token);
+      return res.data;
+    } catch (error) {
+      throw error;
+    }
   };
 
   const register = async (username, email, password) => {
-    await axios.post(`${import.meta.env.VITE_BACKEND_URL}auth/register`, { username, email, password });
+    try {
+      await authAPI.register({ username, email, password });
+      // Automatically log in after registration
+      const res = await authAPI.login({ email, password });
+      const { token } = res.data;
+      setToken(token);
+      setUser({ email });
+      localStorage.setItem('token', token);
+      return res.data;
+    } catch (error) {
+      throw error;
+    }
   };
 
   const logout = () => {

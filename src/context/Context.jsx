@@ -1,5 +1,6 @@
 import { createContext, useState } from "react";
 import runChat from "../config/gemini";
+import { responsesAPI } from "../services/api";
 
 export const Context = createContext();
 
@@ -25,10 +26,14 @@ const ContextProvider = (props) => {
     setShowResult(true);
 
     let response;
+    let currentPrompt;
+    
     if (prompt !== undefined) {
+        currentPrompt = prompt;
         response = await runChat(prompt);
         setRecentPrompt(prompt);
     } else {
+        currentPrompt = input;
         setPrevPrompts(prev => [...prev, input]);
         setRecentPrompt(input);
         response = await runChat(input);
@@ -45,6 +50,17 @@ const ContextProvider = (props) => {
     }
 
     console.log("Final response:", newArray);
+
+    // Save response to backend
+    try {
+        await responsesAPI.submitResponse({
+            prompt: currentPrompt,
+            response: response
+        });
+        console.log("Response saved to backend");
+    } catch (error) {
+        console.error("Failed to save response:", error);
+    }
 
     const words = newArray.split('*').join("</br>").split(" ");
     words.forEach((word, i) => {
