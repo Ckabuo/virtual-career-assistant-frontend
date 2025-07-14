@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import './dashboard.css';
 import { responsesAPI } from '../services/api';
 import ReactMarkdown from 'react-markdown';
+import Loader from '../components/Loader/Loader';
 
 export default function Dashboard() {
   const [responses, setResponses] = useState([]);
@@ -30,7 +31,7 @@ export default function Dashboard() {
     <div className="dashboard-container p-6">
       <h2 className="text-2xl font-bold mb-4">My Career Test Responses</h2>
       {loading ? (
-        <p>Loading...</p>
+        <Loader />
       ) : responses.length === 0 ? (
         <p>No responses found.</p>
       ) : (

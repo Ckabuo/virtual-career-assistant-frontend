@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './admin.css';
 import { responsesAPI } from '../services/api';
 import ReactMarkdown from 'react-markdown';
+import Loader from '../components/Loader/Loader';
 
 export default function AdminView() {
   const [allResponses, setAllResponses] = useState([]);
@@ -28,7 +29,7 @@ export default function AdminView() {
     <div className="admin-container p-6">
       <h2 className="text-2xl font-bold mb-4">All Career Assistant Responses</h2>
       {loading ? (
-        <p>Loading...</p>
+        <Loader />
       ) : error ? (
         <p className="text-red-600">{error}</p>
       ) : allResponses.length === 0 ? (
